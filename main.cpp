@@ -4,13 +4,12 @@
 int main()
 {
     Calculator c;
-    GUI g;
-
-    g.runGUI();
-
-//    c.getUserInputs();
+//    GUI g;
 //
-//    cout << c;
+//    g.runGUI();
+
+    c.getUserInputs();
+    cout << c;
 
     return 0;
 }

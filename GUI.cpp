@@ -5,7 +5,7 @@
 #include "GUI.h"
 
 
-GUI::GUI() : window(sf::VideoMode{650, 150, 32}, "GPA Calculator")
+GUI::GUI() : window(sf::VideoMode{650, 75, 32}, "GPA Calculator")
 {
 
 }
@@ -29,8 +29,8 @@ void GUI::setupText()
     displayText.setFillColor(sf::Color::White);
     displayInputText.setFillColor(sf::Color::White);
 
-    displayText.setPosition(5, 0);
-    displayInputText.setPosition(displayText.getGlobalBounds().width + 10, 0);
+    displayText.setPosition(5, 15);
+    displayInputText.setPosition(displayText.getGlobalBounds().width + 10,  15);
 }
 
 
@@ -44,14 +44,15 @@ void GUI::specificKeyboardActions(int asciiValue)
             displayInputText.setString(inputText);
         }
     }
-    else if (asciiValue == 9)  //horizontal tab
-    {
-        inputText.push_back('\t');
-        displayInputText.setString(inputText);
-    }
+//    else if (asciiValue == 9)  //horizontal tab
+//    {
+//        inputText.push_back('\t');
+//        displayInputText.setString(inputText);
+//    }
     else if (asciiValue == 13)  //return key
     {
-        cout << inputText << endl;
+        getTermsInput();
+        //cout << inputText << endl;
         inputText.clear();
         //inputText.push_back('\n');
         displayInputText.setString(inputText);
@@ -60,6 +61,36 @@ void GUI::specificKeyboardActions(int asciiValue)
     {
         cout << "Thanks for typing! ";
         exit(0);
+    }
+}
+
+
+void GUI::getTermsInput()
+{
+    for (char letter : inputText)
+    {
+        if (temp == 0 || temp == 1)
+        {
+            if (letter < 49 || letter > 57)
+            {
+                cout << "Invalid input!\n";
+                return;
+            }
+            else
+            {
+                if (temp == 0)
+                {
+                    temp = c.getTermsFromGUI(stoi(inputText));
+                    return;
+                }
+                if (temp == 1)
+                {
+                    temp = c.getCoursesFromGUI(stoi(inputText));
+                    return;
+                }
+                //cout << inputText << endl;
+            }
+        }
     }
 }
 
@@ -79,11 +110,24 @@ void GUI::runGUI()
 
             if (event.type == sf::Event::TextEntered)
             {
-                specificKeyboardActions(event.text.unicode);
-                if (event.text.unicode >= 32 && event.text.unicode <= 127)
+                if (inputText.size() > 2)
                 {
-                    inputText += static_cast<char>(event.text.unicode);
+                    inputText.pop_back();
                     displayInputText.setString(inputText);
+                }
+                else
+                {
+                    specificKeyboardActions(event.text.unicode);
+                    if (event.text.unicode >= 32 && event.text.unicode <= 127)
+                    {
+//                        if (event.text.unicode >= 65 && event.text.unicode <= 70 ||
+//                            event.text.unicode >= 97 && event.text.unicode <= 102)
+//                        {
+//                            cout << inputText << endl;
+//                        }
+                        inputText += static_cast<char>(event.text.unicode);
+                        displayInputText.setString(inputText);
+                    }
                 }
             }
         }

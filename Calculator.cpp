@@ -45,6 +45,7 @@ int Calculator::getTerms()
 int Calculator::getCoursesPerTerm()
 {
     cin >> courses;
+    courses = invalidInputs(courses);
     return courses;
 }
 
@@ -52,6 +53,7 @@ int Calculator::getCoursesPerTerm()
 int Calculator::getUnitsPerCourse()
 {
     cin >> units;
+    units = invalidInputs(units);
     totalUnits += units;
 
     return units;
@@ -66,6 +68,22 @@ string Calculator::getGradePerCourse()
     grade = invalidInputs('A', 'F', grade);
     cout << grade << endl;
     return grade;
+}
+
+
+string Calculator::getCourseName()
+{
+    string name;
+
+    cin.clear();
+    excess();
+    getline(cin, name);
+
+    for (char& letter : name)
+    {
+        letter = toupper(letter);
+    }
+    return name;
 }
 
 
@@ -100,6 +118,27 @@ double Calculator::calculateIndividualGrades(int unitInput, double gradeValue)
 }
 
 
+void Calculator::excess()
+{
+    char c;
+
+    do
+    {
+        cin.get(c);
+    } while (c != '\n');
+}
+
+
+void Calculator::resetInputs()
+{
+    courseInfo.clear();
+    calculatedGrades.clear();
+    courses = 0;
+    units = 0;
+    totalUnits = 0;
+}
+
+
 void Calculator::calculateGPA()
 {
     for (auto grades : calculatedGrades)
@@ -107,6 +146,46 @@ void Calculator::calculateGPA()
         gpa += grades;
     }
     gpa = gpa / totalUnits;
+}
+
+
+int Calculator::displayTermInfo()
+{
+    int response;
+
+    for (const auto& name : courseInfo)
+    {
+        cout << name;
+    }
+
+    cout << "\nIs the information above correct?\n"
+            "[1] Yes\n"
+            "[2] No\n"
+            "[3] Exit\n"
+            "Enter option: ";
+    cin >> response;
+    return response;
+}
+
+
+int Calculator::invalidInputs(int input)
+{
+    do
+    {
+        if (cin.fail() || input <= 0)
+        {
+            cout << "Invalid input! Enter again: ";
+            cin.clear();
+            excess();
+            cin >> input;
+        }
+        else
+        {
+            cout << endl;
+            break;
+        }
+    } while (true);
+    return input;
 }
 
 
@@ -120,6 +199,10 @@ void Calculator::getUserInputs()
 
         for (int j = 0; j < courses; j++)
         {
+            cout << "Enter the course name for course " << j + 1 << ": ";
+            courseInfo.push_back("Course Name: " + getCourseName());
+            cin.clear();
+
             cout << "Enter total number of units for course " << j + 1 << ": ";
             int courseUnits = getUnitsPerCourse();
 
@@ -142,11 +225,80 @@ void Calculator::getUserInputs()
                     grade = grade - 0.3;
                 }
             }
+            courseInfo[j] += "\t\tUnits: " + to_string(courseUnits) + "\tGrade: " + temp + "\n";
             calculateIndividualGrades(courseUnits, grade);
             cout << endl;
         }
+        int choice = displayTermInfo();
+
+        if (choice != 1)
+        {
+            exit(1);
+            //resetInputs();
+            //i = 0;
+        }
+        courseInfo.clear();
+        cout << endl;
     }
     calculateGPA();
+}
+
+
+int Calculator::getTermsFromGUI(int termsInput)
+{
+    terms = termsInput;
+    //cout << terms << endl;
+    return 1;
+}
+
+
+int Calculator::getCoursesFromGUI(int coursesInput)
+{
+    courses = coursesInput;
+    //cout << courses << endl;
+    return 2;
+}
+
+
+int Calculator::getCourseNameFromGUI(string s)
+{
+    return 3;
+}
+
+
+string Calculator::changeDisplayText(string s)
+{
+    return s;
+}
+
+
+//working on grabbing input efficiently with GUI
+void Calculator::getUserInputsGUI()
+{
+    string s;
+    for (int i = 0; i < terms; i++)
+    {
+        s = "\nEnter total number of courses for term " + to_string(i + 1) + ": ";
+        changeDisplayText(s);
+
+        for (int j = 0; j < courses; j++)
+        {
+            s = "Enter the course name for course " + to_string(j + 1) + ": ";
+            changeDisplayText(s);
+
+            courseInfo.push_back("Course Name: " + getCourseName());
+            cin.clear();
+
+            cout << "Enter total number of units for course " << j + 1 << ": ";
+            int courseUnits = getUnitsPerCourse();
+
+            cout << "Enter letter grade for course " << j + 1 << ": ";
+            string temp = getGradePerCourse();
+
+            char charGradeInput = toupper(temp[0]); //convert letters to uppercase
+            double grade = getGradeValue(charGradeInput);
+        }
+    }
 }
 
 

@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <vector>
 
+
 using namespace std;
 
 
@@ -26,6 +27,7 @@ class Calculator
 private:
     int terms, courses, units;
     vector<double> calculatedGrades;
+    vector<string> courseInfo;
     double gpa = 0;
     double totalUnits = 0;
 
@@ -35,16 +37,27 @@ public:
     int getTerms();
     int getCoursesPerTerm();
     int getUnitsPerCourse();
+    int displayTermInfo();
+    static int invalidInputs(int input);
 
     double calculateIndividualGrades(int unitInput, double gradeValue);
 
-    string getGradePerCourse();
-    string invalidInputs(char a, char b, string correctInput);
+    static string getGradePerCourse();
+    static string getCourseName();
+    static string invalidInputs(char a, char b, string correctInput);
 
-    gradeValues getGradeValue(char letterGrade);
+    static gradeValues getGradeValue(char letterGrade);
 
+    static void excess();
+    void resetInputs();
     void calculateGPA();
     void getUserInputs();
+
+    int getTermsFromGUI(int termsInput);
+    int getCoursesFromGUI(int coursesInput);
+    int getCourseNameFromGUI(string s);
+    static string changeDisplayText(string s);
+    void getUserInputsGUI();
 
     friend ostream& operator << (ostream& outs, const Calculator& c);
 };
